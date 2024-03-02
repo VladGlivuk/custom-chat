@@ -11,8 +11,7 @@ const io = new Server(server, {cors: {
 const port = 8080;
 
 app.get('/', (req, res) => {
-  console.log('req: ', req);
-});
+res.send('<h1>Hello</h1>')});
 
 io.on('connection', (socket) => {
   console.log('socket:', socket);
