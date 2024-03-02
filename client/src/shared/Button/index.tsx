@@ -1,8 +1,14 @@
 import { FC } from "react"
 
-const Button: FC = () => {
+type Props = {
+  title: string;
+  onClick: () => void;
+}
+
+const Button: FC<Props> = ({title, onClick}) => {
   return (
-    <div>Button</div>
+    <div className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded max-w-max text-center cursor-pointer " onClick={onClick}>{title}
+    </div>
   )
 }
 
