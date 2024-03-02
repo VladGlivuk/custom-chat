@@ -1,9 +1,7 @@
-import { FC } from "react"
+import { FC } from 'react';
 
 const AllRooms: FC = () => {
-  return (
-    <div>AllRooms</div>
-  )
-}
+  return <div>AllRooms</div>;
+};
 
-export default AllRooms
+export default AllRooms;
