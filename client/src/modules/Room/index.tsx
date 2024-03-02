@@ -44,7 +44,7 @@ const RoomPage: FC = () => {
       <button onClick={() => socket.emit('message', message)}>Send message</button>
 
       {isConnected && <div>data</div>}
-      </div>
+    </div>
   )
 }
 

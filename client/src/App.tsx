@@ -1,13 +1,16 @@
-import './App.css';
+import { FC } from 'react';
 import {BrowserRouter, Route, Routes} from 'react-router-dom'
-import Home from './components/Home';
-import RoomPage from './components/Room';
+// modules
+import Home from './modules/Home';
+import RoomPage from './modules/Room';
+import AllRooms from './modules/AllRooms';
 
-function App() {
+const App: FC = () => {
   return (
     <BrowserRouter>
     <Routes>
         <Route index element={<Home />} />
+        <Route path='allRooms' element={<AllRooms />} />
         <Route path='room/:id' element={<RoomPage />} />
      </Routes>
     </BrowserRouter>
