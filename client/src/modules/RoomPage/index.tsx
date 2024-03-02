@@ -1,20 +1,19 @@
 import MessageItem from 'entities/Message';
 import RoomItem from 'entities/Room';
+import { defaultMessages, rooms } from 'mocks';
 import { FC, KeyboardEvent, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Input from 'shared/Input';
 import { socket } from 'socket';
-import { Message, Room } from 'types';
+import { Message } from 'types';
 // shared
 
 const RoomPage: FC = () => {
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<Array<Message>>([
-    { message: 'Sent message', isReceived: false, id: crypto.randomUUID() },
-    { message: 'Received message', isReceived: true, id: crypto.randomUUID() }
-  ]);
 
-  const { id: queryId } = useParams();
+  const [messages, setMessages] = useState<Array<Message>>(defaultMessages);
+
+  const { roomId } = useParams();
 
   useEffect(() => {
     socket.on('receive_message', (data) => {
@@ -49,14 +48,6 @@ const RoomPage: FC = () => {
 
   const userName = 'user';
 
-  const rooms: Array<Room> = [
-    { title: 'Room 1', description: 'Room 1 description', id: 1 },
-    { title: 'Room 2', description: 'Room 2 description', id: 2 },
-    { title: 'Room 3', description: 'Room 3 description', id: 3 },
-    { title: 'Room 4', description: 'Room 4 description', id: 4 },
-    { title: 'Room 5', description: 'Room 5 description', id: 5 }
-  ];
-
   return (
     <div className="container mx-auto shadow-lg rounded-lg min-h-dvh">
       <div className="px-5 py-5 flex justify-between items-center bg-white border-b-2">
@@ -71,9 +62,11 @@ const RoomPage: FC = () => {
           />
         </div>
 
-        <div className="h-12 w-12 p-2 bg-yellow-500 rounded-full text-white font-semibold flex items-center justify-center">
+        <Link
+          to="/profile"
+          className="h-12 w-12 p-2 bg-yellow-500 rounded-full text-white font-semibold flex items-center justify-center">
           {userName}
-        </div>
+        </Link>
       </div>
 
       <div className="flex flex-row justify-between bg-white">
@@ -83,7 +76,7 @@ const RoomPage: FC = () => {
               title={title}
               description={description}
               key={id}
-              isActive={+(queryId as string) === id}
+              isActive={+(roomId as string) === id}
               id={id}
             />
           ))}
@@ -109,7 +102,7 @@ const RoomPage: FC = () => {
 
         <div className="w-2/5 border-l-2 px-5">
           <div className="flex flex-col">
-            <h1>RoomPage {queryId}</h1>
+            <h1>RoomPage {roomId}</h1>
           </div>
         </div>
       </div>

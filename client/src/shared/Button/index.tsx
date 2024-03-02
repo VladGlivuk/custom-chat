@@ -1,17 +1,22 @@
+import cn from 'libs';
 import { FC } from 'react';
 
 type Props = {
   title: string;
   onClick: () => void;
+  className?: string;
 };
 
-const Button: FC<Props> = ({ title, onClick }) => {
+const Button: FC<Props> = ({ title, onClick, className }) => {
   return (
-    <div
-      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded max-w-max text-center cursor-pointer"
+    <button
+      className={cn(
+        'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded max-w-full text-center cursor-pointer',
+        className
+      )}
       onClick={onClick}>
       {title}
-    </div>
+    </button>
   );
 };
 
