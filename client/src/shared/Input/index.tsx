@@ -1,21 +1,25 @@
-import { ChangeEvent, FC } from 'react';
+import cn from 'libs';
+import { ChangeEvent, FC, KeyboardEvent } from 'react';
 
 type Props = {
   value: string;
   changeHandler: (value: string) => void;
+  onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
   label: string;
+  className?: string;
 };
 
-const Input: FC<Props> = ({ label, value, changeHandler }) => {
+const Input: FC<Props> = ({ label, value, changeHandler, onKeyDown, className }) => {
   const onChange = (event: ChangeEvent<HTMLInputElement>) => changeHandler(event.target.value);
 
   return (
-    <div className="w-72">
+    <div className={cn('w-full', className)}>
       <div className="relative w-full min-w-[200px] h-10">
         <input
           value={value}
           onChange={onChange}
           placeholder=""
+          onKeyDown={onKeyDown}
           className="peer w-full h-full bg-transparent text-blue-gray-700 font-sans font-normal outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 border focus:border-2 border-t-transparent focus:border-t-transparent text-sm px-3 py-2.5 rounded-[7px] border-blue-gray-200 focus:border-gray-900"
         />
 
