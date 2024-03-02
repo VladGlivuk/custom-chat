@@ -1,3 +1,4 @@
+import API from 'API';
 import AuthorizationWrapper from 'entities/AuthorizationWrapper';
 import UserForm from 'entities/UserForm';
 import { FC } from 'react';
@@ -7,9 +8,11 @@ import { IAuthorizationRequest } from 'types';
 const Login: FC = () => {
   const navigate = useNavigate();
 
-  const loginHandler = (authorizationValues: IAuthorizationRequest) => {
+  const loginHandler = async (authorizationValues: IAuthorizationRequest) => {
     console.log('authorizationValues: ', authorizationValues);
-    navigate('/profile');
+    const loginResponse = await API.post('login', authorizationValues);
+    console.log('loginResponse: ', loginResponse);
+    if (loginResponse?.data) navigate('/profile');
   };
 
   return (
