@@ -1,0 +1,23 @@
+{
+  "name": "chat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "initProject": "yarn workspace client install && yarn workspace server install && yarn workspace client build",
+    "start": "concurrently \"yarn workspace server start\" \"yarn workspace client start\"",
+    "commit": "./gitCommit.sh"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "private": "true",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
