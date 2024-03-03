@@ -2,19 +2,20 @@ import express from 'express';
 import 'dotenv/config';
 const app = express();
 import { createServer } from 'http';
-const server = createServer(app);
 import { Server } from 'socket.io';
 import connectDB from './config/database';
 import cors from 'cors';
 import authRoutes from './src/routes/auth';
 
-connectDB();
+app.use(cors());
 
-app.use(authRoutes);
+const server = createServer(app);
+
+connectDB();
 
 app.use(express.json());
 
-app.use(cors());
+app.use(authRoutes);
 
 const io = new Server(server, {
   cors: { origin: 'http://localhost:3000', methods: ['GET', 'POST'] },

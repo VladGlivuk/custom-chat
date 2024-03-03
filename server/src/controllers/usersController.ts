@@ -1,7 +1,7 @@
-import User, { IUser } from '../models/User';
+import User from '../models/User';
 
-export const createUser = async (req: IUser, res: any) => {
-  const { login, password } = req;
+export const createUser = async (req: any, res: any) => {
+  const { login, password } = req.body;
 
   try {
     const user = await User.create({ login, password });
