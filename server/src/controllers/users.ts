@@ -1,10 +1,10 @@
 import User from '../models/User';
 
 export const createUser = async (req: any, res: any) => {
-  const { login, password } = req.body;
+  const { userName, password } = req.body;
 
   try {
-    const user = await User.create({ login, password });
+    const user = await User.create({ userName, password });
 
     res.status(200).json(user);
   } catch (error) {
