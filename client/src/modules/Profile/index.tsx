@@ -19,7 +19,7 @@ const Profile: FC = () => {
     navigate('/');
   };
 
-  const userData = { login: 'User', password: '' };
+  const userData = { userName: 'User', password: '' };
 
   return (
     <div>

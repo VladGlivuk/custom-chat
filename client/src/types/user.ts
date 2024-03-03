@@ -1,4 +1,4 @@
 export interface IAuthorizationRequest {
-  login: string;
+  userName: string;
   password: string;
 }

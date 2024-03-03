@@ -9,18 +9,39 @@ import { Message } from 'types';
 // shared
 
 const RoomPage: FC = () => {
+  const [isSocketConnected, setIsSocketConnected] = useState(false);
+
   const [message, setMessage] = useState('');
+
+  const [user, _setUser] = useState({
+    userName: 'Vlad',
+    password: '12345',
+    id: crypto.randomUUID()
+  });
 
   const [messages, setMessages] = useState<Array<Message>>(defaultMessages);
 
   const { roomId } = useParams();
 
   useEffect(() => {
+    socket.emit('setup', user);
+    socket.emit('connection', () => setIsSocketConnected(true));
+  }, []);
+
+  useEffect(() => {
+    socket.emit('join chat', roomId);
+  }, [roomId]);
+
+  useEffect(() => {
     socket.on('receive_message', (data) => {
-      setMessages((previousMessages) => [
-        ...previousMessages,
-        { message: data.message, isReceived: true, id: crypto.randomUUID() }
-      ]);
+      if (!roomId || roomId !== data.roomId) {
+        setMessages((previousMessages) => [
+          ...previousMessages,
+          { message: data.message, isReceived: true, id: crypto.randomUUID() }
+        ]);
+        return;
+      }
+      // message not in our room
     });
   }, [socket]);
 
@@ -41,6 +62,10 @@ const RoomPage: FC = () => {
 
   const sendMessage = () => {
     socket.emit('send_message', { message });
+    setMessages((previousMessages) => [
+      ...previousMessages,
+      { message, isReceived: false, id: crypto.randomUUID() }
+    ]);
     clearMessageInput();
   };
 
