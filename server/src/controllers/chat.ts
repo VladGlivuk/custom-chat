@@ -17,7 +17,8 @@ export const createChat = async (req: any, res: any) => {
     if (error instanceof Error) {
       console.error(error.message);
     } else {
-      console.error('An unknown error occurred!');
+      console.error('Error creating chat:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
   }
 };

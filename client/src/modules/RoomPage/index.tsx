@@ -1,47 +1,61 @@
 import MessageItem from 'entities/Message';
 import RoomItem from 'entities/Room';
-import { defaultMessages, rooms } from 'mocks';
+import { rooms } from 'mocks';
 import { FC, KeyboardEvent, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Input from 'shared/Input';
 import { socket } from 'socket';
-import { Message } from 'types';
+import { Chat, IMessageResponse, IUserResponse, Message } from 'types';
+import { createChat, createMessage, fetchMessages, registerUser } from './api';
 // shared
 
 const RoomPage: FC = () => {
-  const [isSocketConnected, setIsSocketConnected] = useState(false);
+  const [_isSocketConnected, setIsSocketConnected] = useState(false);
+  const [user, setUser] = useState<IUserResponse | null>(null);
+  const [chat, setChat] = useState<Chat | null>(null);
+  const [messages, setMessages] = useState<Array<Message>>([]);
 
   const [message, setMessage] = useState('');
 
-  const [user, _setUser] = useState({
+  const registerValues = {
     userName: 'Vlad',
-    password: '12345',
-    id: crypto.randomUUID()
-  });
-
-  const [messages, setMessages] = useState<Array<Message>>(defaultMessages);
+    password: '12345'
+  };
 
   const { roomId } = useParams();
 
   useEffect(() => {
-    socket.emit('setup', user);
-    socket.emit('connection', () => setIsSocketConnected(true));
+    (async () => {
+      await registerUser(registerValues).then(async (user: IUserResponse) => {
+        setUser(user);
+        socket.emit('setup', user);
+        socket.emit('connection', () => setIsSocketConnected(true));
+        const response = await createChat(user._id);
+        setChat(response);
+      });
+    })();
   }, []);
 
   useEffect(() => {
+    if (chat && chat._id)
+      (async () => await fetchMessages(chat._id).then((data) => setMessages(data)))();
     socket.emit('join chat', roomId);
-  }, [roomId]);
+  }, [chat]);
 
   useEffect(() => {
-    socket.on('receive_message', (data) => {
-      if (!roomId || roomId !== data.roomId) {
-        setMessages((previousMessages) => [
-          ...previousMessages,
-          { message: data.message, isReceived: true, id: crypto.randomUUID() }
-        ]);
+    socket.on('receive_message', (data: IMessageResponse) => {
+      const newMessage: Message = {
+        content: data.content,
+        chatId: data.chat._id,
+        userId: data.userId._id,
+        messageId: data._id
+      };
+
+      setMessages((previousMessages) => [...previousMessages, newMessage]);
+      if (!roomId || roomId !== data.chat._id) {
         return;
+        // message not in our room
       }
-      // message not in our room
     });
   }, [socket]);
 
@@ -60,13 +74,21 @@ const RoomPage: FC = () => {
     }
   };
 
-  const sendMessage = () => {
-    socket.emit('send_message', { message });
-    setMessages((previousMessages) => [
-      ...previousMessages,
-      { message, isReceived: false, id: crypto.randomUUID() }
-    ]);
-    clearMessageInput();
+  const sendMessage = async () => {
+    if (message.length >= 1 && chat && user) {
+      const response = await createMessage(message, chat._id, user._id);
+      socket.emit('send_message', response);
+
+      const newMessage: Message = {
+        content: response.content,
+        chatId: response.chat._id,
+        userId: response.userId._id,
+        messageId: response._id
+      };
+
+      setMessages((previousMessages) => [...previousMessages, newMessage]);
+      clearMessageInput();
+    }
   };
 
   const clearMessageInput = () => setMessage('');
@@ -109,8 +131,8 @@ const RoomPage: FC = () => {
 
         <div className="w-full px-5 flex flex-col justify-between">
           <div className="flex flex-col gap-2 mt-5">
-            {messages.map(({ message, isReceived, id }) => (
-              <MessageItem key={id} message={message} isReceived={isReceived} id={id} />
+            {messages.map(({ content, userId, messageId }) => (
+              <MessageItem key={messageId} content={content} isReceived={userId !== user?._id} />
             ))}
           </div>
 

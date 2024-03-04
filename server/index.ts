@@ -11,11 +11,11 @@ import messageRoutes from './src/routes/message';
 
 app.use(cors());
 
+app.use(express.json());
+
 const server = createServer(app);
 
 connectDB();
-
-app.use(express.json());
 
 app.use(authRoutes, chatRoutes, messageRoutes);
 
@@ -42,8 +42,6 @@ io.on('connection', (socket) => {
     console.log('data: ', data);
     socket.broadcast.emit('receive_message', data);
   });
-
-
 });
 
 const port = process.env.PORT || 8000;

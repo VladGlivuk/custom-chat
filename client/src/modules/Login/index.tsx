@@ -9,9 +9,7 @@ const Login: FC = () => {
   const navigate = useNavigate();
 
   const loginHandler = async (authorizationValues: IAuthorizationRequest) => {
-    console.log('authorizationValues: ', authorizationValues);
     const loginResponse = await API.post('register', authorizationValues);
-    console.log('loginResponse: ', loginResponse);
     if (loginResponse?.data) navigate('/profile');
   };
 
